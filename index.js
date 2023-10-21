@@ -4,17 +4,10 @@ const app = express();
 const port = process.env.port || 3000;
 const bodyParser = require("body-parser");
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
-const authToken = "9c89007f1ef9fec4c3810ad0e098d1d7";
-
+const authToken = "c6e6762c6d7ec95553f9603006c1d67b";
 const storage = require("node-persist");
 
-// const redis = require("redis");
 
-// const client = redis.createClient();
-
-// client.on("connect", function () {
-//     console.log("Connection Successful!!");
-// });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -131,7 +124,7 @@ app.post("/enquiry", (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const phoneNumber = parseInt(req.body.phone);
+  const phoneNumber =req.body.phone;
 
   const otp = Math.floor(100000 + Math.random() * 900000);
 
@@ -140,18 +133,21 @@ app.post("/signup", async (req, res) => {
     to: `+91 ${phoneNumber}`,
     from: +16178418324,
     body: `Your OTP is: ${otp}`,
-  });
+  })
+  .then(()=>res.json({ message: "Valid Number"}))
+  .catch(()=>res.json({message: "Invalid Number"}))
 
   const user = { phoneNumber, otp };
   console.log(user);
 
-  await storage.init(/* options ... */);
+  await storage.init();
   await storage.setItem("user", user);
 
-  res.json({ message: "OTP sent successfully" });
-  console.log("message sent successfully")
+  
+  console.log("otp sent successfully")
 
 });
+
 
 app.post("/verify", async (req, res) => {
   const otp = req.body.otp;
@@ -159,26 +155,62 @@ app.post("/verify", async (req, res) => {
   const user = await storage.getItem("user");
   console.log(user);
 
-  if (!user.otp) {
+  if (!user) {
     console.log("not found");
     return res.status(400).json({ message: "User not found" });
-   
   }
 
-  if (otp === user.otp) {
+  if (otp == user.otp) {
     console.log("otp verification successful");
-    res.json({ message: "OTP verification successful" });
-    const sql = `INSERT INTO signup (phone, otp) VALUES ('${user.phoneNumber}','${user.otp}')`;
 
-    connection.query(sql, (err, result) => {
-      if (err) throw err;
-      res.json({ message: "User registered successfully" });
-      console.log("User registered successfully");
+    var sql = "INSERT INTO signup (phone, otp, entry_time) VALUES (?, ?, NOW())";
+    connection.query(sql, [user.phoneNumber, user.otp], (err, result) => {
+      if (err) {
+        console.error("Error inserting data into the database:", err);
+        res.status(500).json({ message: "Database error" });
+      } else {
+        console.log("User registered successfully");
+        res.json({ message: "OTP verification successful" });
+          storage.clear();
+      }
     });
   } else {
+    console.log("Invalid OTP");
     res.status(400).json({ message: "Invalid OTP" });
   }
+
+
 });
+
+
+app.get("/banner", (req, res) => {
+  connection.query(
+    "SELECT * from banner;",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/presence", (req, res) => {
+  connection.query(
+    "SELECT * FROM `our_presence`;",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(results)
+       return res.json(results);
+      }
+    }
+  );
+});
+
+
 
 app.listen(port, () => {
   console.log("server is running");
