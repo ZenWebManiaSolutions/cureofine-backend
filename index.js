@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
 const authToken = "c6e6762c6d7ec95553f9603006c1d67b";
 const storage = require("node-persist");
+const cors= require('cors');
+app.use(cors())
 
 
 
@@ -183,9 +185,27 @@ app.post("/verify", async (req, res) => {
 });
 
 
+
+
+app.get("/presence", (req, res) => {
+  connection.query(
+    "SELECT * FROM `our_presence`;",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        // console.log(results)
+       return res.json(results);
+      }
+    }
+  );
+});
+
+
+
 app.get("/banner", (req, res) => {
   connection.query(
-    "SELECT * from banner;",
+    "SELECT `id`, `image` FROM `banner`",
     (error, results) => {
       if (error) {
         console.log(error);
@@ -196,15 +216,112 @@ app.get("/banner", (req, res) => {
   );
 });
 
-app.get("/presence", (req, res) => {
+app.get("/state", (req, res) => {
   connection.query(
-    "SELECT * FROM `our_presence`;",
+    "SELECT `id`, `State` FROM `state` ",
     (error, results) => {
       if (error) {
         console.log(error);
       } else {
-        console.log(results)
-       return res.json(results);
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/city", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name` FROM `manage_district` ",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/brand", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name`, `logo`,  `status` FROM `brand` ",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/products", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name`, `duration`, `price`, `offer_price`, `image`, `details` FROM `physiotherapy`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/surgery", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name`, `description` FROM `scategory`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/specialization", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name`, `image` FROM `specialization` ",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/staticText", (req, res) => {
+  connection.query(
+    "SELECT `page_menu`, `content` FROM `static_page` WHERE id=2;",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/contactInfo", (req, res) => {
+  connection.query(
+    "SELECT  `email`,  `mobile_2`, `office_hour` FROM `website_data`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
       }
     }
   );
