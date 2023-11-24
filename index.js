@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.port || 3000;
 const bodyParser = require("body-parser");
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
-const authToken = "28ef3efbf7e9e2c65085f5518db448e0";
+const authToken = "6da6caa5a6d403ab5c775891957224a4";
 const storage = require("node-persist");
 const cors= require('cors');
 app.use(cors())
