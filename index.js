@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 const connection = mysql.createConnection({
-host: "127.0.0.1",
+host: "localhost",
   user: "mclinpll_cureofine",
   password: "BRLN,GC4*WXT",
   database: "mclinpll_cureofine_db",
