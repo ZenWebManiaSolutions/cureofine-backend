@@ -1,10 +1,10 @@
 const express = require("express");
 const mysql = require("mysql");
 const app = express();
-const port = process.env.port || 3306;
+const port = process.env.port || 3000;
 const bodyParser = require("body-parser");
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
-const authToken = "c6e6762c6d7ec95553f9603006c1d67b";
+const authToken = "28ef3efbf7e9e2c65085f5518db448e0";
 const storage = require("node-persist");
 const cors= require('cors');
 app.use(cors())
@@ -16,10 +16,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 const connection = mysql.createConnection({
-host: "localhost",
+
+  host: "119.18.54.135",
   user: "mclinpll_cureofine",
   password: "BRLN,GC4*WXT",
   database: "mclinpll_cureofine_db",
+  
   
 });
 
@@ -29,12 +31,6 @@ connection.connect((err) => {
   } else {
     console.log("connected");
   }
-});
-
-
-app.get("/", (req, res) => {
-res.send("hello")
-  console.log("helloo")
 });
 
 app.get("/about", (req, res) => {
@@ -158,6 +154,8 @@ app.post("/signup", async (req, res) => {
 });
 
 
+
+
 app.post("/verify", async (req, res) => {
   const otp = req.body.otp;
   console.log("otp", otp);
@@ -172,7 +170,7 @@ app.post("/verify", async (req, res) => {
   if (otp == user.otp) {
     console.log("otp verification successful");
 
-    var sql = "INSERT INTO signup (phone, otp, entry_time) VALUES (?, ?, NOW())";
+    var sql = "INSERT INTO web_user( mobile, otp_details, cdate ) VALUES (?, ?, NOW())";
     connection.query(sql, [user.phoneNumber, user.otp], (err, result) => {
       if (err) {
         console.error("Error inserting data into the database:", err);
@@ -190,6 +188,40 @@ app.post("/verify", async (req, res) => {
 
 
 });
+
+
+// app.post("/verify", async (req, res) => {
+//   const otp = req.body.otp;
+//   console.log("otp", otp);
+//   const user = await storage.getItem("user");
+//   console.log(user);
+
+//   if (!user) {
+//     console.log("not found");
+//     return res.status(400).json({ message: "User not found" });
+//   }
+
+//   if (otp == user.otp) {
+//     console.log("otp verification successful");
+
+//     var sql = "INSERT INTO signup (phone, otp, entry_time) VALUES (?, ?, NOW())";
+//     connection.query(sql, [user.phoneNumber, user.otp], (err, result) => {
+//       if (err) {
+//         console.error("Error inserting data into the database:", err);
+//         res.status(500).json({ message: "Database error" });
+//       } else {
+//         console.log("User registered successfully");
+//         res.json({ message: "OTP verification successful" });
+//           storage.clear();
+//       }
+//     });
+//   } else {
+//     console.log("Invalid OTP");
+//     res.status(400).json({ message: "Invalid OTP" });
+//   }
+
+
+// });
 
 
 
