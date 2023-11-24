@@ -34,7 +34,7 @@ connection.connect((err) => {
 
 app.get("/", (req, res) => {
 res.send("hello")
-  console.log(helloo")
+  console.log("helloo")
 });
 
 app.get("/about", (req, res) => {
