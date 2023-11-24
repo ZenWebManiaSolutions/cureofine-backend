@@ -33,16 +33,8 @@ connection.connect((err) => {
 
 
 app.get("/", (req, res) => {
-  connection.query(
-    "SELECT `content` FROM `static_page` WHERE id=1;",
-    (error, results) => {
-      if (error) {
-        console.log(error);
-      } else {
-        res.json(results);
-      }
-    }
-  );
+res.send("hello")
+  console.log(helloo")
 });
 
 app.get("/about", (req, res) => {
