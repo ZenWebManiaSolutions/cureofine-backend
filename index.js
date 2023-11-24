@@ -1,7 +1,7 @@
 const express = require("express");
 const mysql = require("mysql");
 const app = express();
-const port = process.env.port || 3000;
+const port = process.env.port || 3306;
 const bodyParser = require("body-parser");
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
 const authToken = "c6e6762c6d7ec95553f9603006c1d67b";
@@ -16,10 +16,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 const connection = mysql.createConnection({
-host: "localhost",
+host: "127.0.0.1",
   user: "mclinpll_cureofine",
   password: "BRLN,GC4*WXT",
   database: "mclinpll_cureofine_db",
+  
 });
 
 connection.connect((err) => {
