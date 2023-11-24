@@ -143,7 +143,7 @@ app.post("/signup", async (req, res) => {
   .catch(()=>res.json({message: "Invalid Number"}))
 
   const user = { phoneNumber, otp };
-  console.log(user);
+
 
   await storage.init();
   await storage.setItem("user", user);
@@ -158,9 +158,9 @@ app.post("/signup", async (req, res) => {
 
 app.post("/verify", async (req, res) => {
   const otp = req.body.otp;
-  console.log("otp", otp);
+
   const user = await storage.getItem("user");
-  console.log(user);
+
 
   if (!user) {
     console.log("not found");
