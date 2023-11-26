@@ -20,7 +20,7 @@ const connection = mysql.createConnection({
   host: "119.18.54.135",
   user: "mclinpll_cureofine",
   password: "BRLN,GC4*WXT",
-  database: "mclinpll_cureofine_db",
+  database: "mclinpll_cureofine_db"
   
   
 });
