@@ -381,6 +381,20 @@ app.get("/hospitals", (req, res) => {
 });
 
 
+app.get("/surgeryList", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name`, `price`, `offer_price`, `image`, `details` FROM `surgery`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
 
 app.listen(port, () => {
   console.log("server is running");
