@@ -367,6 +367,20 @@ app.get("/contactInfo", (req, res) => {
 });
 
 
+app.get("/hospitals", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name`, `mobile`, `address`, `htype`, `image` FROM `manage_hospital`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
 
 app.listen(port, () => {
   console.log("server is running");
