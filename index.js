@@ -383,7 +383,7 @@ app.get("/hospitals", (req, res) => {
 
 app.get("/surgeryList", (req, res) => {
   connection.query(
-    "SELECT `id`, `name`, `price`, `offer_price`, `image`, `details` FROM `surgery`",
+    "SELECT `id`, `name`, `price`, `offer_price`, `image`, `details`, `hid` FROM `surgery`",
     (error, results) => {
       if (error) {
         console.log(error);
