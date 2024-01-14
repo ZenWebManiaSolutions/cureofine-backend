@@ -3,25 +3,40 @@ const mysql = require("mysql");
 const app = express();
 const port = process.env.port || 3000;
 const bodyParser = require("body-parser");
+const storage = require("node-persist");
+const cors = require('cors');
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
 const authToken = "6da6caa5a6d403ab5c775891957224a4";
-const storage = require("node-persist");
-const cors= require('cors');
+
+
+
 app.use(cors())
-
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 const connection = mysql.createConnection({
 
-  host: "119.18.54.135",
-  user: "mclinpll_cureofine",
-  password: "BRLN,GC4*WXT",
-  database: "mclinpll_cureofine_db"
-  
-  
+  // host: "119.18.54.135",
+  // user: "mclinpll_cureofine",
+  // password: "BRLN,GC4*WXT",
+  // database: "mclinpll_cureofine_db",
+
+
+//   $servername = "localhost";
+// $username = "mclinpll_cureofine_new_u";
+// $password = "3{Mg~G39W8MK";
+// $dbname = "mclinpll_cureofine_new";
+
+host: "119.18.54.135",
+user: "mclinpll_cureofine_new_u",
+password: "3{Mg~G39W8MK",
+database: "mclinpll_cureofine_new",
+
+  // host: "localhost",
+  // user: "root",
+  // password: "",
+  // database: "cureofine_new",
 });
 
 connection.connect((err) => {
@@ -128,7 +143,7 @@ app.post("/enquiry", (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const phoneNumber =req.body.phone;
+  const phoneNumber = req.body.phone;
 
   const otp = Math.floor(100000 + Math.random() * 900000);
 
@@ -138,16 +153,16 @@ app.post("/signup", async (req, res) => {
     from: +16178418324,
     body: `Your OTP is: ${otp}`,
   })
-  .then(()=>res.json({ message: "Valid Number"}))
-  .catch(()=>res.json({message: "Invalid Number"}))
+    .then(() => res.json({ message: "Valid Number" }))
+    .catch(() => res.json({ message: "Invalid Number" }))
 
   const user = { phoneNumber, otp };
-
+  console.log(user);
 
   await storage.init();
   await storage.setItem("user", user);
 
-  
+
   console.log("otp sent successfully")
 
 });
@@ -157,9 +172,9 @@ app.post("/signup", async (req, res) => {
 
 app.post("/verify", async (req, res) => {
   const otp = req.body.otp;
-
+  console.log("otp", otp);
   const user = await storage.getItem("user");
-
+  console.log(user);
 
   if (!user) {
     console.log("not found");
@@ -177,7 +192,7 @@ app.post("/verify", async (req, res) => {
       } else {
         console.log("User registered successfully");
         res.json({ message: "OTP verification successful" });
-          storage.clear();
+        storage.clear();
       }
     });
   } else {
@@ -189,51 +204,20 @@ app.post("/verify", async (req, res) => {
 });
 
 
-// app.post("/verify", async (req, res) => {
-//   const otp = req.body.otp;
-//   console.log("otp", otp);
-//   const user = await storage.getItem("user");
-//   console.log(user);
 
-//   if (!user) {
-//     console.log("not found");
-//     return res.status(400).json({ message: "User not found" });
-//   }
-
-//   if (otp == user.otp) {
-//     console.log("otp verification successful");
-
-//     var sql = "INSERT INTO signup (phone, otp, entry_time) VALUES (?, ?, NOW())";
-//     connection.query(sql, [user.phoneNumber, user.otp], (err, result) => {
-//       if (err) {
-//         console.error("Error inserting data into the database:", err);
-//         res.status(500).json({ message: "Database error" });
-//       } else {
-//         console.log("User registered successfully");
-//         res.json({ message: "OTP verification successful" });
-//           storage.clear();
-//       }
-//     });
-//   } else {
-//     console.log("Invalid OTP");
-//     res.status(400).json({ message: "Invalid OTP" });
-//   }
-
-
-// });
 
 
 
 
 app.get("/presence", (req, res) => {
   connection.query(
-    "SELECT * FROM `our_presence`;",
+    "SELECT `id`, `location_id`, `name`, `image`, `status` FROM `manage_location` WHERE status= 'Active'",
     (error, results) => {
       if (error) {
         console.log(error);
       } else {
         // console.log(results)
-       return res.json(results);
+        return res.json(results);
       }
     }
   );
@@ -243,8 +227,7 @@ app.get("/presence", (req, res) => {
 
 app.get("/banner", (req, res) => {
   connection.query(
-    "SELECT `id`, `image` FROM `banner`",
-    (error, results) => {
+    "SELECT `id`, `image`, `page` FROM `banner` ",    (error, results) => {
       if (error) {
         console.log(error);
       } else {
@@ -254,6 +237,181 @@ app.get("/banner", (req, res) => {
   );
 });
 
+
+app.get("/service", (req, res) => {
+  connection.query(
+    "SELECT `id`, `ser_id`, `name`, `image`, `cby`, `status` FROM `manage_service` ",    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/doctorsList", (req, res) => {
+  connection.query(
+    "SELECT `id`, `doctor_id`, `name`, `profile_img`, `mobile1`, `mobile2`,`department`, `details`, `voice_fee`, `voice_status`, `chat_fee`, `chat_status`, `video_fee`, `video_status` FROM `manage_doctor` WHERE status= 'Active' ",    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/surgeryCategory", (req, res) => {
+  connection.query(
+    "SELECT `id`, `cat_id`, `name`, `image`, `cby`, `cdate`, `status` FROM `manage_surgery_category` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/surgeryList", (req, res) => {
+  connection.query(
+    "SELECT `id`, `ser_id`, `location`, `category`, `hospital`, `name`, `price`, `offer_price`, `details`, `tranding`, `status`, `cby`, `cdate` FROM `surgery` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+
+app.get("/ivfList", (req, res) => {
+  connection.query(
+    "SELECT * FROM `ivf` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/dentalList", (req, res) => {
+  connection.query(
+    "SELECT * FROM `dental` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+app.get("/hairList", (req, res) => {
+  connection.query(
+    "SELECT * FROM `hair` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+
+
+
+
+app.get("/ivf", (req, res) => {
+  connection.query(
+    "SELECT `id`, `cat_id`, `name`, `image`, `cby`, `cdate`, `status` FROM `manage_ivf_category` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/dental", (req, res) => {
+  connection.query(
+    "SELECT `id`, `cat_id`, `name`, `image`, `cby`, `cdate`, `status` FROM `manage_dental_category` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/hairCosmetic", (req, res) => {
+  connection.query(
+    "SELECT `id`, `cat_id`, `name`, `image`, `cby`, `cdate`, `status` FROM `manage_hair_category` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/ayurveda", (req, res) => {
+  connection.query(
+    "SELECT `id`, `ayu_id`, `name`, `image`, `details`, `inclusion`, `excluation`, `price`, `offer_price`, `location`, `tranding`, `cby`, `cdate`, `status` FROM `ayurveda` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/testimonials", (req, res) => {
+  connection.query(
+    "SELECT `id`, `name`, `profession`, `date_of_speak`, `content`, `img`, `entry_time`, `entry_by`, `status` FROM `testimonial` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+app.get("/brands", (req, res) => {
+  connection.query(
+    "SELECT `id`, `brand_id`, `name`, `logo`, `status`, `banner` FROM `brand` WHERE status= 'Active'",   
+     (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
 app.get("/state", (req, res) => {
   connection.query(
     "SELECT `id`, `State` FROM `state` ",
@@ -282,18 +440,18 @@ app.get("/city", (req, res) => {
 });
 
 
-app.get("/brand", (req, res) => {
-  connection.query(
-    "SELECT `id`, `name`, `logo`,  `status` FROM `brand` ",
-    (error, results) => {
-      if (error) {
-        console.log(error);
-      } else {
-        res.json(results);
-      }
-    }
-  );
-});
+// app.get("/brand", (req, res) => {
+//   connection.query(
+//     "SELECT `id`, `name`, `logo`,  `status` FROM `brand` ",
+//     (error, results) => {
+//       if (error) {
+//         console.log(error);
+//       } else {
+//         res.json(results);
+//       }
+//     }
+//   );
+// });
 
 
 app.get("/products", (req, res) => {
@@ -354,7 +512,7 @@ app.get("/staticText", (req, res) => {
 
 app.get("/contactInfo", (req, res) => {
   connection.query(
-    "SELECT  `email`,  `mobile_2`, `office_hour` FROM `website_data`",
+    "SELECT `id`, `domain`, `facebook`, `twitter`, `youtube`, `linkdin`, `whatsapp`, `instagram`, `address_1`, `address_2`, `email`, `mobile_1`, `mobile_2`, `cus_care_num`, `hits`, `office_hour` FROM `website_data`",
     (error, results) => {
       if (error) {
         console.log(error);
@@ -364,11 +522,12 @@ app.get("/contactInfo", (req, res) => {
     }
   );
 });
+
 
 
 app.get("/hospitals", (req, res) => {
   connection.query(
-    "SELECT `id`, `name`, `mobile`, `address`, `htype`, `image` FROM `manage_hospital`",
+    "SELECT `id`, `hos_id`, `location`, `name`, `image`, `facility_type`, `service_type` FROM `manage_hospital` WHERE status= 'Active'",
     (error, results) => {
       if (error) {
         console.log(error);
@@ -380,9 +539,10 @@ app.get("/hospitals", (req, res) => {
 });
 
 
-app.get("/surgeryList", (req, res) => {
+
+app.get("/facilityType", (req, res) => {
   connection.query(
-    "SELECT `id`, `name`, `price`, `offer_price`, `image`, `details`, `hid` FROM `surgery`",
+    "SELECT `id`, `fac_id`, `name` FROM `manage_facility` WHERE status= 'Active'",
     (error, results) => {
       if (error) {
         console.log(error);
@@ -392,6 +552,20 @@ app.get("/surgeryList", (req, res) => {
     }
   );
 });
+
+
+// app.get("/surgeryList", (req, res) => {
+//   connection.query(
+//     "SELECT `id`, `name`, `price`, `offer_price`, `image`, `details`, `hid` FROM `surgery`",
+//     (error, results) => {
+//       if (error) {
+//         console.log(error);
+//       } else {
+//         res.json(results);
+//       }
+//     }
+//   );
+// });
 
 
 
