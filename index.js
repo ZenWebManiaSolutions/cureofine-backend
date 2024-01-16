@@ -251,7 +251,7 @@ app.get("/service", (req, res) => {
 
 app.get("/doctorsList", (req, res) => {
   connection.query(
-    "SELECT `id`, `doctor_id`, `name`, `profile_img`, `mobile1`, `mobile2`,`department`, `details`, `voice_fee`, `voice_status`, `chat_fee`, `chat_status`, `video_fee`, `video_status` FROM `manage_doctor` WHERE status= 'Active' ",    (error, results) => {
+    "SELECT * FROM `manage_doctor` WHERE status= 'Active' ",  (error, results) => {
       if (error) {
         console.log(error);
       } else {
