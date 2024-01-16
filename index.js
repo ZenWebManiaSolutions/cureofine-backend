@@ -538,7 +538,7 @@ app.get("/contactInfo", (req, res) => {
 
 app.get("/hospitals", (req, res) => {
   connection.query(
-    "SELECT `id`, `hos_id`, `location`, `name`, `image`, `facility_type`, `service_type` FROM `manage_hospital` WHERE status= 'Active'",
+   "SELECT * FROM `manage_hospital` WHERE status= 'Active'",
     (error, results) => {
       if (error) {
         console.log(error);
