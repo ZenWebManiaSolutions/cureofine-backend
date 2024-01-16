@@ -260,6 +260,19 @@ app.get("/doctorsList", (req, res) => {
   );
 });
 
+
+app.get("/languages", (req, res) => {
+  connection.query(
+    "SELECT * FROM `manage_language` WHERE status= 'Active' ", (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
 app.get("/surgeryCategory", (req, res) => {
   connection.query(
     "SELECT `id`, `cat_id`, `name`, `image`, `cby`, `cdate`, `status` FROM `manage_surgery_category` WHERE status= 'Active'",   
