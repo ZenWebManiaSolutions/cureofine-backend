@@ -235,6 +235,18 @@ app.get("/banner", (req, res) => {
   );
 });
 
+app.get("/offerBanner", (req, res) => {
+  connection.query(
+    "SELECT `id`, `image` FROM `offerbanner` WHERE status= 'Active' ",    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
 
 app.get("/service", (req, res) => {
   connection.query(
