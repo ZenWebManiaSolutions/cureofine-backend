@@ -83,6 +83,19 @@ app.get("/dept", (req, res) => {
   );
 });
 
+app.get("/qualification", (req, res) => {
+  connection.query(
+    "SELECT * FROM `manage_qualification`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
 app.get("/term", (req, res) => {
   connection.query(
     "SELECT `content` FROM `static_page` WHERE id=4;",
