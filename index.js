@@ -237,7 +237,7 @@ app.get("/banner", (req, res) => {
 
 app.get("/offerBanner", (req, res) => {
   connection.query(
-    "SELECT `id`, `image` FROM `offerbanner` WHERE status= 'Active' ",    (error, results) => {
+    "SELECT `id`, `image` FROM `offerbanner`",    (error, results) => {
       if (error) {
         console.log(error);
       } else {
