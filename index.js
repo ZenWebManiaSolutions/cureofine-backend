@@ -72,7 +72,7 @@ app.get("/privacy", (req, res) => {
 
 app.get("/contactinfo", (req, res) => {
   connection.query(
-    "SELECT * FROM `contact_us`",
+    "SELECT * FROM `business_enq`",
     (error, results) => {
       if (error) {
         console.log(error);
