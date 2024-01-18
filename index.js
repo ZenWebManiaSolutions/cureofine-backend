@@ -70,9 +70,9 @@ app.get("/privacy", (req, res) => {
   );
 });
 
-app.get("/contactinfo", (req, res) => {
+app.get("/dept", (req, res) => {
   connection.query(
-    "SELECT * FROM `business_enq`",
+    "SELECT * FROM `manage_department`",
     (error, results) => {
       if (error) {
         console.log(error);
