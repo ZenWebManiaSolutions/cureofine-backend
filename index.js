@@ -70,6 +70,19 @@ app.get("/privacy", (req, res) => {
   );
 });
 
+app.get("/contactinfo", (req, res) => {
+  connection.query(
+    "SELECT * FROM `contact_us`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
 app.get("/term", (req, res) => {
   connection.query(
     "SELECT `content` FROM `static_page` WHERE id=4;",
