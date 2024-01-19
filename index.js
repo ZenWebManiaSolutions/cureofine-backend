@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const storage = require("node-persist");
 const cors = require('cors');
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
-const authToken = "fd76abc17a3e93aff5dca7be7eef46f6";
+const authToken = "b9deda9bf11b986094e20069e8f479bb";
 
 app.use(cors())
 app.use(bodyParser.json());
@@ -174,7 +174,7 @@ app.post("/signup", async (req, res) => {
   const twilio = require("twilio")(accountSid, authToken);
   await twilio.messages.create({
     to: `+91${phoneNumber}`,
-    from: +16178418324,
+    from: ++16178418324,
     body: `Your OTP is:${otp}`,
   })
     .then(() => res.json({ message: "Valid Number" }))
