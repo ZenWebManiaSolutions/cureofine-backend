@@ -8,7 +8,6 @@ const cors = require('cors');
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
 const authToken = "fd76abc17a3e93aff5dca7be7eef46f6";
 
-
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
