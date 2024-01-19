@@ -215,7 +215,7 @@ app.post("/verify", async (req, res) => {
         res.status(500).json({ message: "Database error" });
       } else {
         console.log("User registered successfully");
-        res.json({ message: "OTP verification successful" });
+          res.json({ message: "OTP verification successful",number: user.phoneNumber });
         storage.clear();
       }
     });
