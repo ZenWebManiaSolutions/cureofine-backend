@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const storage = require("node-persist");
 const cors = require('cors');
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
-const authToken = "6da6caa5a6d403ab5c775891957224a4";
+const authToken = "fd76abc17a3e93aff5dca7be7eef46f6";
 
 
 app.use(cors())
