@@ -168,17 +168,18 @@ app.post("/enquiry", (req, res) => {
 
 app.post("/signup", async (req, res) => {
   const phoneNumber = req.body.phone;
+  console.log(phoneNumber)
 
   const otp = Math.floor(100000 + Math.random() * 900000);
 
   const twilio = require("twilio")(accountSid, authToken);
   await twilio.messages.create({
-    to: `+91 ${phoneNumber}`,
+    to: `+91${phoneNumber}`,
     from: +16178418324,
-    body: `Your OTP is: ${otp}`,
+    body: `Your OTP is:${otp}`,
   })
     .then(() => res.json({ message: "Valid Number" }))
-    .catch(() => res.json({ message: "Invalid Number" }))
+    .catch(() => res.json({ message: `Invalid Number${phoneNumber}` }))
 
   const user = { phoneNumber, otp };
   console.log(user);
