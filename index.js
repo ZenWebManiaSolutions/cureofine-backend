@@ -173,8 +173,8 @@ app.post("/signup", async (req, res) => {
 
   const twilio = require("twilio")(accountSid, authToken);
   await twilio.messages.create({
-    to: `+91${phoneNumber}`,
-    from: ++16178418324,
+    to: `+91 ${phoneNumber}`,
+    from: +16178418324,
     body: `Your OTP is:${otp}`,
   })
     .then(() => res.json({ message: "Valid Number" }))
