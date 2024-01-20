@@ -7,11 +7,38 @@ const storage = require("node-persist");
 const cors = require('cors');
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
 const authToken = "b9deda9bf11b986094e20069e8f479bb";
-
+const sdk = require('api')('@msg91api/v5.0#6n91xmlhu4pcnz');
+const axios = require('axios');
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
+
+
+
+const sendSms = async (mobileNumber, otp) => {
+  console.log(mobileNumber,otp)
+  const apiKey = '413483A3W9I40kb5g7659e5c6fP1'; // Replace with your actual API key
+  const apiUrl = 'https://api.msg91.com/api/v5/flow/';
+
+  try {
+    const response = await axios.post(apiUrl, {
+      flow_id: '659e5ebeb6ea785bac43ae09',
+      sender: 'CUREOF',
+      mobiles: `91${mobileNumber}`,
+      otp: otp,
+    }, {
+      headers: {
+        'authkey': apiKey,
+        'content-type': 'application/json',
+      },
+    });
+
+    console.log('Msg91 API response:', response.data);
+  } catch (error) {
+    console.error('Error sending SMS:', error.message);
+  }
+};
 
 const connection = mysql.createConnection({
   // host: "119.18.54.135",
@@ -616,6 +643,158 @@ app.get("/facilityType", (req, res) => {
 //   );
 // });
 
+
+app.post("/updateProfile", async (req, res) => {
+  console.log(req.body);
+
+  const phoneNumber = req.body.phone;
+  const name = req.body.name;
+  const city = req.body.city;
+  const state = req.body.state;
+  const country = req.body.country;
+  const email = req.body.email;
+  const pincode = req.body.pincode;
+  const gender = req.body.gender;
+  const image = req.body.image;
+
+  const updateProfileQuery =
+    "UPDATE web_user SET name = ?, email = ?, gender = ?, image = ?, city = ?, state = ?, country = ?, pincode = ? WHERE mobile = ?";
+
+  connection.query(
+    updateProfileQuery,
+    [name, email, gender, image, city, state, country, pincode, phoneNumber],
+    (updateErr, updateResults) => {
+      if (updateErr) {
+        console.error(updateErr);
+        return res.status(500).json({ message: "Error updating status" });
+      } else {
+        console.log("Updation successful");
+        res.json({ message: "Updation successful", result: updateResults });
+      }
+    }
+  );
+});
+
+
+app.get("/userInfo", (req, res) => {
+  const phoneNumber = req.query.phone; // Use req.query for GET requests
+  console.log(phoneNumber);
+
+  const getUserQuery = "SELECT * FROM `web_user` WHERE mobile = ?";
+  
+  connection.query(getUserQuery, [phoneNumber], (error, results) => {
+    if (error) {
+      console.log(error);
+      res.status(500).json({ message: "Error fetching user information" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+
+
+
+  app.post("/generateOtp", async (req, res) => {
+    const phoneNumber = req.body.phone;
+    console.log(phoneNumber)
+  
+    // Check if the user exists in the database
+    const checkUserQuery = "SELECT * FROM web_user WHERE mobile = ?";
+    connection.query(checkUserQuery, [phoneNumber], async (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Database error" });
+      }
+      if (results.length === 0) {
+        // User does not exist, insert the user and generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        
+        const insertUserQuery = "INSERT INTO web_user(mobile, otp_details, cdate) VALUES (?, ?, NOW())";
+        connection.query(insertUserQuery, [phoneNumber, otp], (err, result) => {
+          if (err) {
+            console.error("Error inserting data into the database:", err);
+            res.status(500).json({ message: "Database error" });
+          } else {
+            // Send OTP to the user using Msg91 API
+            sdk.sendSms({
+              template_id: 'your_msg91_template_id',
+              recipients: [{ mobiles: phoneNumber, VAR1: otp.toString() }]
+            })
+            .then(({ data }) => {
+              console.log("Msg91 API response:", data);
+              res.json({ message: "User and OTP inserted successfully", number: phoneNumber });
+            })
+            .catch(err => {
+              console.error("Error sending SMS:", err);
+              res.status(500).json({ message: "Error sending SMS" });
+            });
+          }
+        });
+      }
+     else if (results.length != 0) {
+        // User exists, generate and insert OTP
+        const otp = Math.floor(100000 + Math.random() * 900000);
+  
+        const insertOtpQuery = "UPDATE web_user SET otp_details = ? WHERE mobile = ?";
+        connection.query(insertOtpQuery, [otp, phoneNumber], (err, result) => {
+          if (err) {
+            console.error("Error inserting OTP into the database:", err);
+            res.status(500).json({ message: "Database error" });
+          } else {
+            // Send OTP to the user using Msg91 API
+            // sdk.sendSms({
+            //   template_id: '659e5ebeb6ea785bac43ae09',
+            //   recipients: [{ mobiles: phoneNumber, VAR1: otp.toString() }]
+            // })
+           sendSms(phoneNumber,otp)
+            .then(() => {
+              // console.log("Msg91 API response:", data);
+              res.json({ message: "OTP generated and sent successfully", number: phoneNumber });
+            })
+            .catch(err => {
+              console.error("Error sending SMS:", err);
+              res.status(500).json({ message: "Error sending SMS" });
+            });
+          }
+        });
+      }
+    });
+  });
+  
+  app.post("/verifyOTP", async (req, res) => {
+    const phoneNumber = req.body.phone;
+    const enteredOTP = req.body.otp;
+  
+    // Verify OTP against the stored OTP in the database
+    const verifyOtpQuery = "SELECT * FROM web_user WHERE mobile = ? AND otp_details = ?";
+    connection.query(verifyOtpQuery, [phoneNumber, enteredOTP], (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Database error" });
+      }
+  
+      if (results.length > 0) {
+
+        const updateStatusQuery = "UPDATE web_user SET status = '1' WHERE mobile = ?";
+        connection.query(updateStatusQuery, [phoneNumber], (updateErr, updateResults) => {
+          if (updateErr) {
+            console.error(updateErr);
+            return res.status(500).json({ message: "Error updating status" });
+          }
+          else{
+            console.log("OTP verification successful")
+            res.json({ message: "OTP verification successful", number: phoneNumber });
+          }
+        })
+       
+
+      } else {
+        res.status(400).json({ message: "Invalid OTP" });
+      }
+    });
+  });
 
 
 app.listen(port, () => {
