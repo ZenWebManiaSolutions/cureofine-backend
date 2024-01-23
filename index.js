@@ -847,7 +847,18 @@ app.get("/userInfo", (req, res) => {
     );
   });
   
-
+app.get("/commonbook", (req, res) => {
+  connection.query(
+    "SELECT * FROM `common_book`",
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
 
 app.listen(port, () => {
   console.log("server is running");
