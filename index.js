@@ -36,7 +36,6 @@ const sendSms = async (mobileNumber, otp) => {
     console.error('Error sending SMS:', error.message);
   }
 };
-
 const connection = mysql.createConnection({
   // host: "119.18.54.135",
   // user: "mclinpll_cureofine",
