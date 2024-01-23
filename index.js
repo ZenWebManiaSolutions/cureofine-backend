@@ -17,7 +17,6 @@ const sendSms = async (mobileNumber, otp) => {
   console.log(mobileNumber,otp)
   const apiKey = '413483A3W9I40kb5g7659e5c6fP1'; // Replace with your actual API key
   const apiUrl = 'https://api.msg91.com/api/v5/flow/';
-
   
   try {
     const response = await axios.post(apiUrl, {
