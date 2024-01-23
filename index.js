@@ -859,6 +859,61 @@ app.get("/commonbook", (req, res) => {
   );
 });
 
+  app.post("/emiForm", async (req, res) => {
+    // console.log(req.body);
+    const name = req.body.name;
+    const attendant_name= req.body.attendant_name;
+    const age = req.body.age;
+    const gender = req.body.gender;
+    const mobile = req.body.mobile;
+    const email = req.body.email;
+    const reason_emi= req.body.reason_emi
+    const selfi = req.body.selfi;
+    const aadhaar = req.body.aadhaar;
+    const amount = req.body.amount;
+    const required_amount = req.body.required_amount;
+    const address = req.body.address;
+    const service_name = req.body.service_name;
+    const service_id = req.body.service_id; 
+    const book_type = req.body.book_type;
+  
+    const sqlInsert = `INSERT INTO emi_form(user_id, name,attendant_name, age, gender, mobile, email, reason_emi, selfi, aadhaar, amount, required_amount, cdate, address, service_name, service_id, book_type) VALUES ('1',?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?)`;
+  
+    connection.query(
+      sqlInsert,
+      [name,attendant_name,age, gender, mobile, email, reason_emi,selfi,aadhaar,amount, required_amount, address, service_name,service_id,book_type],
+      (insertErr, insertResults) => {
+        if (insertErr) {
+          console.error(insertErr);
+          return res.status(500).json({ message: "Error inserting data" });
+        }
+  
+        // Retrieve the last inserted ID
+        const lastInsertId = insertResults.insertId;
+  
+        // Construct the booking_id
+        const booking_id = `Emi00${lastInsertId}`;
+  
+        // Update the record with the generated booking_id
+        const sqlUpdate = `UPDATE emi_form SET booking_id = ? WHERE id = ?`;
+  
+        connection.query(
+          sqlUpdate,
+          [booking_id, lastInsertId],
+          (updateErr, updateResults) => {
+            if (updateErr) {
+              console.error(updateErr);
+              return res.status(500).json({ message: "Error updating booking_id" });
+            }
+  
+            console.log("Insertion successful");
+            res.json({ message: "Insertion successful", result: updateResults });
+          }
+        );
+      }
+    );
+  });
+
 app.listen(port, () => {
   console.log("server is running");
 });
