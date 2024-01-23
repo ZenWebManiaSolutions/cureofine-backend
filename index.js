@@ -793,7 +793,7 @@ app.get("/userInfo", (req, res) => {
   });
 
 
-  app.post("/bookSurgery", async (req, res) => {
+app.post("/bookSurgery", async (req, res) => {
     // console.log(req.body);
   
     const service_id = req.body.service_id;
@@ -824,7 +824,7 @@ app.get("/userInfo", (req, res) => {
         const lastInsertId = insertResults.insertId;
   
         // Construct the booking_id
-        const booking_id = `CUR00${lastInsertId}`;
+        const booking_id = `CUR000${lastInsertId}`;
   
         // Update the record with the generated booking_id
         const sqlUpdate = `UPDATE common_book SET booking_id = ? WHERE id = ?`;
@@ -845,19 +845,8 @@ app.get("/userInfo", (req, res) => {
       }
     );
   });
-  
-app.get("/commonbook", (req, res) => {
-  connection.query(
-    "SELECT * FROM `common_book`",
-    (error, results) => {
-      if (error) {
-        console.log(error);
-      } else {
-        res.json(results);
-      }
-    }
-  );
-});
+
+
 
   app.post("/emiForm", async (req, res) => {
     // console.log(req.body);
@@ -892,7 +881,7 @@ app.get("/commonbook", (req, res) => {
         const lastInsertId = insertResults.insertId;
   
         // Construct the booking_id
-        const booking_id = `Emi00${lastInsertId}`;
+        const booking_id = `Emi000${lastInsertId}`;
   
         // Update the record with the generated booking_id
         const sqlUpdate = `UPDATE emi_form SET booking_id = ? WHERE id = ?`;
@@ -913,7 +902,6 @@ app.get("/commonbook", (req, res) => {
       }
     );
   });
-
 app.listen(port, () => {
   console.log("server is running");
 });
