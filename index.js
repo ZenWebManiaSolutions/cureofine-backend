@@ -13,7 +13,6 @@ app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
-
 const sendSms = async (mobileNumber, otp) => {
   console.log(mobileNumber,otp)
   const apiKey = '413483A3W9I40kb5g7659e5c6fP1'; // Replace with your actual API key
