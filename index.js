@@ -797,36 +797,56 @@ app.get("/userInfo", (req, res) => {
   app.post("/bookSurgery", async (req, res) => {
     // console.log(req.body);
   
-   const service_id = req.body.service_id;
-   const name = req.body.name;
-   const gender = req.body.gender;
-   const age = req.body.age;
-   const address = req.body.address;
-   const mobile = req.body.mobile;
-   const email = req.body.email;
-   const service_name = req.body.service_name;
-   const service_date = req.body.service_date;
-   const service_time = req.body.service_time;
-   const amount = req.body.amount;
-   const book_type= req.body.book_type
-
+    const service_id = req.body.service_id;
+    const name = req.body.name;
+    const gender = req.body.gender;
+    const age = req.body.age;
+    const address = req.body.address;
+    const mobile = req.body.mobile;
+    const email = req.body.email;
+    const service_name = req.body.service_name;
+    const service_date = req.body.service_date;
+    const service_time = req.body.service_time;
+    const amount = req.body.amount;
+    const book_type = req.body.book_type;
   
-   const sql = `INSERT INTO common_book (service_id, name, gender, age, address, mobile, email, service_name, service_date, service_time, amount, cdate, book_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)`;
-
-   connection.query(
-     sql,
-     [service_id, name, gender, age, address, mobile, email, service_name, service_date, service_time, amount, book_type],
-     (updateErr, updateResults) => {
-       if (updateErr) {
-         console.error(updateErr);
-         return res.status(500).json({ message: "Error updating status" });
-       } else {
-         console.log("Insertion successful");
-         res.json({ message: "Insertion successful", result: updateResults });
-       }
-     }
-   );
+    const sqlInsert = `INSERT INTO common_book (user_id,service_id, name, gender, age, address, mobile, email, service_name, service_date, service_time, amount, cdate, book_type) VALUES ('1',?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)`;
+  
+    connection.query(
+      sqlInsert,
+      [service_id, name, gender, age, address, mobile, email, service_name, service_date, service_time, amount, book_type],
+      (insertErr, insertResults) => {
+        if (insertErr) {
+          console.error(insertErr);
+          return res.status(500).json({ message: "Error inserting data" });
+        }
+  
+        // Retrieve the last inserted ID
+        const lastInsertId = insertResults.insertId;
+  
+        // Construct the booking_id
+        const booking_id = `CUR00${lastInsertId}`;
+  
+        // Update the record with the generated booking_id
+        const sqlUpdate = `UPDATE common_book SET booking_id = ? WHERE id = ?`;
+  
+        connection.query(
+          sqlUpdate,
+          [booking_id, lastInsertId],
+          (updateErr, updateResults) => {
+            if (updateErr) {
+              console.error(updateErr);
+              return res.status(500).json({ message: "Error updating booking_id" });
+            }
+  
+            console.log("Insertion successful");
+            res.json({ message: "Insertion successful", result: updateResults });
+          }
+        );
+      }
+    );
   });
+  
 
 
 app.listen(port, () => {
