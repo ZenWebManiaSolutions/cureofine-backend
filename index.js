@@ -3,12 +3,13 @@ const mysql = require("mysql");
 const app = express();
 const port = process.env.port || 3000;
 const bodyParser = require("body-parser");
-const storage = require("node-persist");
+// const storage = require("node-persist");
 const cors = require('cors');
 const accountSid = "ACb5372861a5287c06e6b0b9119fad7621";
 const authToken = "b9deda9bf11b986094e20069e8f479bb";
 const sdk = require('api')('@msg91api/v5.0#6n91xmlhu4pcnz');
 const axios = require('axios');
+const multer = require('multer');
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -65,6 +66,41 @@ connection.connect((err) => {
   } else {
     console.log("connected");
   }
+});
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, 'upload', 'idproof');
+    cb(null, uploadDir);
+},
+
+  filename: function (req, file, cb) {
+      const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const extension = path.extname(file.originalname);
+      if (!req.uploadedImages) {
+        req.uploadedImages = [];
+      }
+   
+      const uploadedImage = uniqueName + extension;
+      req.uploadedImages.push(uploadedImage);
+      cb(null, uniqueName + extension);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/upload', upload.fields([{ name: 'photo' }, { name: 'aadhar' }]), (req, res) => {
+
+  // Assuming 'photo' and 'aadhar' are the names of the fields in the frontend form
+  // Uploaded image details are available in req.files
+
+   const uploadedImages = req.uploadedImages;
+   // console.log("114",uploadedImages)
+   res.status(200).json({
+     message: 'Images uploaded successfully',
+     uploadedImages: uploadedImages
+   });
 });
 
 app.get("/about", (req, res) => {
