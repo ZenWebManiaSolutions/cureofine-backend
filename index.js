@@ -938,6 +938,61 @@ app.post("/bookSurgery", async (req, res) => {
       }
     );
   });
+
+
+  const phonepeRoute = require('./routes/phonepayRoute')
+app.use("/api", phonepeRoute);
+
+
+app.post("/updatePaymentTransactionSuccess", async (req, res) => {
+  console.log(req.body);
+
+  const phoneNumber = req.body.phone;
+  const transactionId = req.body.transaction_id;
+  const service_name = req.body.service_name
+
+  const updateProfileQuery =
+    "UPDATE common_book SET transaction_id = ?, payment_status = '1' , payment_date = NOW() WHERE mobile = ? AND service_name = ?;";
+
+  connection.query(
+    updateProfileQuery,
+    [transactionId,  phoneNumber,service_name],
+    (updateErr, updateResults) => {
+      if (updateErr) {
+        console.error(updateErr);
+        return res.status(500).json({ message: "Error updating status" });
+      } else {
+        console.log("Updation successful");
+        res.json({ message: "Updation successful", result: updateResults });
+      }
+    }
+  );
+});
+
+app.post("/updatePaymentTransactionFailure", async (req, res) => {
+  console.log(req.body);
+
+  const phoneNumber = req.body.phone;
+  const transactionId = req.body.transaction_id;
+  const service_name = req.body.service_name
+
+  const updateProfileQuery =
+    "UPDATE common_book SET transaction_id = ?, payment_status = '0' , payment_date = NOW() WHERE mobile = ? AND service_name = ?";
+
+  connection.query(
+    updateProfileQuery,
+    [transactionId,  phoneNumber, service_name],
+    (updateErr, updateResults) => {
+      if (updateErr) {
+        console.error(updateErr);
+        return res.status(500).json({ message: "Error updating status" });
+      } else {
+        console.log("Updation successful");
+        res.json({ message: "Updation successful", result: updateResults });
+      }
+    }
+  );
+});
 app.listen(port, () => {
   console.log("server is running");
 });
