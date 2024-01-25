@@ -403,8 +403,8 @@ app.get("/surgeryList", (req, res) => {
 
 app.get("/ivfList", (req, res) => {
   connection.query(
-    "SELECT * FROM `ivf` WHERE status= 'Active'",   
-     (error, results) => {
+    "SELECT ivf.`id` AS `ivf_id`, ivf.`ser_id`, ivf.`location` AS `ivf_location`, ivf.`category`, ivf.`hospital`, ivf.name, ivf.`price`, ivf.`offer_price`, ivf.`details` AS `dental_details`, ivf.`tranding`, h.`name` AS `hospital_name`, h.`location` AS `hospital_location`, h.`image` AS `hospital_image`, h.`address` AS `hospital_address`, h.`mobile1` AS `hospital_mobile1`, h.`mobile2` AS `hospital_mobile2`, h.`contact_person` AS `hospital_contact_person`, h.`facility_type`, h.`service_type`, h.`h_type`, h.`employee_id`, h.`hospital_display_id`, h.`hos_rand`, h.`entity_type`, h.`registration_document`, h.`details` AS `hospital_details`, h.`hospital_time`, h.`sun_start`, h.`sun_end`, h.`mon_start`, h.`mon_end`, h.`tue_start`, h.`tue_end`, h.`wed_start`, h.`wed_end`, h.`thu_start`, h.`thu_end`, h.`fri_start`, h.`fri_end`, h.`sat_start`, h.`sat_end`, h.`sun_status`, h.`mon_status`, h.`tue_status`, h.`wed_status`, h.`thu_status`, h.`fri_status`, h.`sat_status` FROM `ivf` ivf JOIN `manage_hospital` h ON ivf.`hospital` = h.`hos_id` WHERE ivf.`status` = 'Active' AND h.`status` = 'Active';",
+    (error, results) => {
       if (error) {
         console.log(error);
       } else {
@@ -414,12 +414,14 @@ app.get("/ivfList", (req, res) => {
   );
 });
 
+
 app.get("/dentalList", (req, res) => {
   connection.query(
-    "SELECT * FROM `dental` WHERE status= 'Active'",   
-     (error, results) => {
+    "SELECT d.`id` AS `dental_id`, d.`ser_id`, d.`location` AS `dental_location`, d.`category`, d.`hospital`, d.name, d.`price`, d.`offer_price`, d.`details` AS `dental_details`, d.`tranding`, d.`status`, h.`name` AS `hospital_name`, h.`location` AS `hospital_location`, h.`image` AS `hospital_image`, h.`address` AS `hospital_address`, h.`mobile1` AS `hospital_mobile1`, h.`mobile2` AS `hospital_mobile2`, h.`contact_person` AS `hospital_contact_person`, h.`facility_type`, h.`service_type`, h.`h_type`, h.`employee_id`, h.`hospital_display_id`, h.`hos_rand`, h.`entity_type`, h.`registration_document`, h.`details` AS `hospital_details`, h.`hospital_time`, h.`sun_start`, h.`sun_end`, h.`mon_start`, h.`mon_end`, h.`tue_start`, h.`tue_end`, h.`wed_start`, h.`wed_end`, h.`thu_start`, h.`thu_end`, h.`fri_start`, h.`fri_end`, h.`sat_start`, h.`sat_end`, h.`sun_status`, h.`mon_status`, h.`tue_status`, h.`wed_status`, h.`thu_status`, h.`fri_status`, h.`sat_status` FROM `dental` d JOIN `manage_hospital` h ON d.`hospital` = h.`hos_id` WHERE d.`status` = 'Active' AND h.`status` = 'Active';",
+    (error, results) => {
       if (error) {
         console.log(error);
+        res.status(500).json({ error: "Internal Server Error" });
       } else {
         res.json(results);
       }
@@ -430,16 +432,18 @@ app.get("/dentalList", (req, res) => {
 
 app.get("/hairList", (req, res) => {
   connection.query(
-    "SELECT * FROM `hair` WHERE status= 'Active'",   
-     (error, results) => {
+    "SELECT hair.`id` AS `hair_id`, hair.`ser_id`, hair.`location` AS `hair_location`, hair.`category`, hair.`hospital`, hair.name, hair.`price`, hair.`offer_price`, hair.`details` AS `hair_details`, hair.`tranding`, h.`name` AS `hospital_name`, h.`location` AS `hospital_location`, h.`image` AS `hospital_image`, h.`address` AS `hospital_address`, h.`mobile1` AS `hospital_mobile1`, h.`mobile2` AS `hospital_mobile2`, h.`contact_person` AS `hospital_contact_person`, h.`facility_type`, h.`service_type`, h.`h_type`, h.`employee_id`, h.`hospital_display_id`, h.`hos_rand`, h.`entity_type`, h.`registration_document`, h.`details` AS `hospital_details`, h.`hospital_time`, h.`sun_start`, h.`sun_end`, h.`mon_start`, h.`mon_end`, h.`tue_start`, h.`tue_end`, h.`wed_start`, h.`wed_end`, h.`thu_start`, h.`thu_end`, h.`fri_start`, h.`fri_end`, h.`sat_start`, h.`sat_end`, h.`sun_status`, h.`mon_status`, h.`tue_status`, h.`wed_status`, h.`thu_status`, h.`fri_status`, h.`sat_status` FROM `hair` hair JOIN `manage_hospital` h ON hair.`hospital` = h.`hos_id` WHERE hair.`status` = 'Active' AND h.`status` = 'Active';",
+    (error, results) => {
       if (error) {
         console.log(error);
+        res.status(500).json({ error: "Internal Server Error" });
       } else {
         res.json(results);
       }
     }
   );
 });
+
 
 
 
