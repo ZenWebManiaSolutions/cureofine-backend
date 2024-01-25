@@ -43,7 +43,7 @@ const newPayment = async (req, res) => {
         };
 
         axios.request(options).then(function (response) {
-            console.log(response.data)
+            // console.log(response.data)
             res.json({ message: "Payment Initiated", result: response.data.data.instrumentResponse.redirectInfo.url,merchantId:response.data.data.merchantId,transactionId:response.data.data.merchantTransactionId});
             // return res.send(response.data.data.instrumentResponse.redirectInfo.url)
         })
@@ -61,9 +61,9 @@ const newPayment = async (req, res) => {
 
 const checkStatus = async (req, res) => {
     // const merchantTransactionId = req.body.transactionId;
-    console.log("64",req.params)
+    // console.log("64",req.params)
     const merchantTransactionId=  req.params.txnId;
-    console.log(merchantTransactionId)
+    // console.log(merchantTransactionId)
 
 
 
@@ -85,7 +85,7 @@ const checkStatus = async (req, res) => {
 
     // CHECK PAYMENT STATUS
     axios.request(options).then(async (response) => {
-        console.log("PhonePe Status Response:", response.data);
+        // console.log("PhonePe Status Response:", response.data);
 
         if (response.data.success === true) {
             res.json({ status: 'success', message: 'Payment successful' });

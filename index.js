@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 const sendSms = async (mobileNumber, otp) => {
-  console.log(mobileNumber,otp)
+  // console.log(mobileNumber,otp)
   const apiKey = '413483A3W9I40kb5g7659e5c6fP1'; // Replace with your actual API key
   const apiUrl = 'https://api.msg91.com/api/v5/flow/';
   
@@ -227,7 +227,7 @@ app.post("/enquiry", (req, res) => {
 
 app.post("/signup", async (req, res) => {
   const phoneNumber = req.body.phone;
-  console.log(phoneNumber)
+  // console.log(phoneNumber)
 
   const otp = Math.floor(100000 + Math.random() * 900000);
 
@@ -241,7 +241,7 @@ app.post("/signup", async (req, res) => {
     .catch(() => res.json({ message: `Invalid Number${phoneNumber}` }))
 
   const user = { phoneNumber, otp };
-  console.log(user);
+  // console.log(user);
 
   await storage.init();
   await storage.setItem("user", user);
@@ -678,7 +678,7 @@ app.get("/facilityType", (req, res) => {
 
 
 app.post("/updateProfile", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   const phoneNumber = req.body.phone;
   const name = req.body.name;
@@ -711,7 +711,7 @@ app.post("/updateProfile", async (req, res) => {
 
 app.get("/userInfo", (req, res) => {
   const phoneNumber = req.query.phone; // Use req.query for GET requests
-  console.log(phoneNumber);
+  // console.log(phoneNumber);
 
   const getUserQuery = "SELECT * FROM `web_user` WHERE mobile = ?";
   
@@ -731,7 +731,7 @@ app.get("/userInfo", (req, res) => {
 
   app.post("/generateOtp", async (req, res) => {
     const phoneNumber = req.body.phone;
-    console.log(phoneNumber)
+    // console.log(phoneNumber)
   
     // Check if the user exists in the database
     const checkUserQuery = "SELECT * FROM web_user WHERE mobile = ?";
@@ -756,7 +756,7 @@ app.get("/userInfo", (req, res) => {
               recipients: [{ mobiles: phoneNumber, VAR1: otp.toString() }]
             })
             .then(({ data }) => {
-              console.log("Msg91 API response:", data);
+              // console.log("Msg91 API response:", data);
               res.json({ message: "User and OTP inserted successfully", number: phoneNumber });
             })
             .catch(err => {
@@ -946,7 +946,7 @@ app.use("/api", phonepeRoute);
 
 
 app.post("/updatePaymentTransactionSuccess", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   const phoneNumber = req.body.phone;
   const transactionId = req.body.transaction_id;
@@ -963,7 +963,7 @@ app.post("/updatePaymentTransactionSuccess", async (req, res) => {
         console.error(updateErr);
         return res.status(500).json({ message: "Error updating status" });
       } else {
-        console.log("Updation successful");
+        // console.log("Updation successful");
         res.json({ message: "Updation successful", result: updateResults });
       }
     }
@@ -971,7 +971,7 @@ app.post("/updatePaymentTransactionSuccess", async (req, res) => {
 });
 
 app.post("/updatePaymentTransactionFailure", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   const phoneNumber = req.body.phone;
   const transactionId = req.body.transaction_id;
