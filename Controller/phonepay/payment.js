@@ -14,8 +14,8 @@ const newPayment = async (req, res) => {
             merchantUserId: req.body.MUID,
             name: req.body.name,
             amount: req.body.amount * 100,
-            // redirectUrl: `http://192.168.0.110:3000/api/status/${merchantTransactionId}`,
-            // redirectMode: 'POST',
+            redirectUrl: `https://cureofine-azff.onrender.com/api/status/${merchantTransactionId}`,
+            redirectMode: 'POST',
             mobileNumber: req.body.mobile,
             paymentInstrument: {
                 type: 'PAY_PAGE'
