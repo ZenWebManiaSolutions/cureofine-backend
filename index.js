@@ -61,13 +61,36 @@ database: "mclinpll_cureofine_new",
   // database: "cureofine_new",
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("connected");
-  }
-});
+
+function handleDisconnect() {
+  connection.connect((err) => {
+    if (err) {
+      console.error('Error connecting to MySQL:', err);
+      setTimeout(handleDisconnect, 2000);
+    } else {
+      console.log("Connected to MySQL");
+    }
+  });
+
+  connection.on('error', (err) => {
+    console.error('MySQL connection error:', err);
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      handleDisconnect();
+    } else {
+      throw err;
+    }
+  });
+}
+
+handleDisconnect();
+
+// connection.connect((err) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log("connected");
+//   }
+// });
 
 
 const storage = multer.diskStorage({
